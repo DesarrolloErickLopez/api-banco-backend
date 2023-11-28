@@ -28,7 +28,7 @@ export class MovimientosService {
         
         let ip = await MovimientosDao.consultarIp();
         let disponible = await MovimientosDao.obtenerDisponibleEnCajero();
-        if ( disponible < movimiento.cantidad) return ErrorMessage.DISPONIBLE_INSUFICIENTE.mensaje;
+        if ( disponible < movimiento.cantidad) return ErrorMessage.DISPONIBLE_INSUFICIENTE;
         const response: any= await axios.post(ip.ip_banco, {
           nombre_banco: 'bbvutl',
           no_cuenta: movimiento.cuenta,
@@ -39,7 +39,7 @@ export class MovimientosService {
         if(response.data.error) return response.data;
          
         let cuentaClienteResponse = await this.cqrs.insertarClienteExterno(movimiento, response.data.codigo_transaccion, disponible);
-        if(!cuentaClienteResponse) return ErrorMessage.RETIRO_INVALIDO.mensaje;
+        if(!cuentaClienteResponse) return ErrorMessage.RETIRO_INVALIDO;
         return {mensaje: SuccessfulMessage.RETIRO_EXTERNO_EXITOSO.mensaje};
 
       }
