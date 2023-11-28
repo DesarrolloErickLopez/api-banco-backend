@@ -52,12 +52,12 @@ export class MovimientoCqrs {
 
     }
 
-    async insertarClienteExterno(movimiento: MovimientoModel, codigo_transaccion: number): Promise<number | string > {
+    async insertarClienteExterno(movimiento: MovimientoModel, codigo_transaccion: number, disponible: number): Promise<number | string > {
 
       try {
         
         if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e0";
-
+        if (await MovimientosDao.actualizarDisponibleEnCajero(disponible - movimiento.cantidad) !== 1 ) return 'e4';
         return await MovimientosDao.insertarRetiro(movimiento.banco, movimiento.cuenta, movimiento.cantidad, codigo_transaccion, 1) ;
           
         } catch (error: any) {

@@ -73,7 +73,7 @@ export class MovimientosDao {
         sql = 'UPDATE bbvutl.cajero  SET disponible = ? WHERE id_cajero = 1;';
 
         const values = [disponible];
-        console.log(sql);
+
         const result: any = await DatabaseService.executeQuery(sql, values);
       
         return result.affectedRows;
