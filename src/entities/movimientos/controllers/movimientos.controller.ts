@@ -23,12 +23,12 @@ export class MovimientosController {
     }
   }
   
-  @Post('otro')
+  @Post('externo')
   async postRetirarExterno(@Req() req: Request, @Res() res: Response) {
 
     try {
       
-      const serviceResponse = await this.service.retiroEfectivoExterno(req.body);
+      const serviceResponse = await this.service.retiroEfectivoExterno(req.body);  
       res.send(serviceResponse);
 
     } catch (error) {

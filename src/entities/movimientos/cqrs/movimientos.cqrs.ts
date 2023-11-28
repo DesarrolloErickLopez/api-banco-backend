@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MovimientosDao } from '../dao/movimientos.dao';
 import { MovimientoModel } from '../models/movimientos.model';
+import { log } from 'console';
 
 @Injectable()
 export class MovimientoCqrs {
@@ -24,17 +25,24 @@ export class MovimientoCqrs {
 
         try {
 
-            let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);
+            let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);              
+            
             if(!accountResponse){
-                return 0;
-            }else if(accountResponse.nip !== movimiento.nip){
-                return 1;
+                return 'e0';
+            }else if(accountResponse.nip != movimiento.nip){              
+                return 'e1';
             }else if(accountResponse.saldo < movimiento.cantidad){
-                return 2;
+                return 'e2';
             }
-            await MovimientosDao.actualizarSaldo(accountResponse.saldo - movimiento.cantidad, movimiento.cuenta);
-            let cuentaActualizada =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);
-            return cuentaActualizada.saldo;
+            if(await MovimientosDao.actualizarSaldo(accountResponse.saldo - movimiento.cantidad, movimiento.cuenta) !== 1) return 'e3';
+
+            let disponibleEnCajero = await MovimientosDao.obtenerDisponibleEnCajero();
+            
+            if (await MovimientosDao.actualizarDisponibleEnCajero(disponibleEnCajero - movimiento.cantidad) !== 1 ) return 'e4';
+
+            let cuentaActualizada =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);            
+            
+            return await MovimientosDao.insertarRetiro(movimiento.banco, movimiento.cuenta, movimiento.cantidad, 0, 1);
             
             
           } catch (error: any) {
@@ -43,6 +51,21 @@ export class MovimientoCqrs {
           }
 
     }
+
+    async insertarClienteExterno(movimiento: MovimientoModel, codigo_transaccion: number): Promise<number | string > {
+
+      try {
+        
+        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e0";
+
+        return await MovimientosDao.insertarRetiro(movimiento.banco, movimiento.cuenta, movimiento.cantidad, codigo_transaccion, 1) ;
+          
+        } catch (error: any) {
+          console.error('Error en MovimientosCqrs:', error);
+          return `Error en MovimientosCqrs - Función: consultarCuentaCliente - ${error.message}`;
+        }
+
+  }
 
 
 }

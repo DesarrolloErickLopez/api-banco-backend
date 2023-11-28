@@ -13,27 +13,34 @@ export class MovimientosService {
   async retiroEfectivoInterno(movimiento: MovimientoModel): Promise<object | string | any> {
 
     try {
-      //if(movimiento.banco !== "bbvutl") return this.retiroEfectivoExterno(movimiento);
+      
       if(movimiento.banco == "bbvutl") {
         if(await this.cqrs.consultarDisponibleEnCajero(movimiento.cantidad))return ErrorMessage.DISPONIBLE_INSUFICIENTE;
-        let cuentaClienteResponse = await this.cqrs.consultarCuentaCliente(movimiento)
-        if(cuentaClienteResponse === 0) return ErrorMessage.CLIENTE_INEXISTENTE;
-        if(cuentaClienteResponse === 1) return ErrorMessage.CREDENCIALES_INVALIDAS;
-        if(cuentaClienteResponse === 2) return ErrorMessage.SALDO_INSUFICIENTE;
-        if(await MovimientosDao.insertarRetiro(movimiento.banco, movimiento.cuenta, movimiento.cantidad, 0, 1)) return {saldo: cuentaClienteResponse, message: SuccessfulMessage.RETIRO_EXITOSO.message};
-        return;
+        let cuentaClienteResponse = await this.cqrs.consultarCuentaCliente(movimiento);
+        if(cuentaClienteResponse === 'e0') return ErrorMessage.CLIENTE_INEXISTENTE;
+        if(cuentaClienteResponse === 'e1') return ErrorMessage.CREDENCIALES_INVALIDAS;
+        if(cuentaClienteResponse === 'e2') return ErrorMessage.SALDO_INSUFICIENTE;
+        if(cuentaClienteResponse === 'e3') return ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CUENTA;
+        if(cuentaClienteResponse === 'e4') return ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CAJERO;        
+        return {codigo_transaccion: cuentaClienteResponse, message: SuccessfulMessage.RETIRO_EXITOSO.message};
+
       }else{
+        
         let ip = await MovimientosDao.consultarIp();
-        let insertResponse = await MovimientosDao.insertarRetiro(movimiento.banco, movimiento.cuenta, movimiento.cantidad, 0, 0);
-        const response = await axios.post(ip.ip_banco, {
-          banco: movimiento.banco,
-          cuenta: movimiento.cuenta,
+        if (await MovimientosDao.obtenerDisponibleEnCajero() < movimiento.cantidad) return ErrorMessage.DISPONIBLE_INSUFICIENTE;
+        const response: any= await axios.post(ip.ip_banco, {
+          nombre_banco: 'bbvutl',
+          no_cuenta: movimiento.cuenta,
           nip: movimiento.nip,
-          cantidad: movimiento.cantidad,
-          codigo_de_transaccion: insertResponse,          
+          monto_retirar: movimiento.cantidad,
+                  
         });
-        let updateResponse = await MovimientosDao.actualizarRetiro(response.data.codigo_de_transaccion);
-        return SuccessfulMessage.RETIRO_EXTERNO_EXITOSO;
+
+        if(response.data.error) return response.data.mensaje; 
+        let cuentaClienteResponse = await this.cqrs.insertarClienteExterno(movimiento, response.data.codigo_transaccion);
+        if(!cuentaClienteResponse) return ErrorMessage.RETIRO_INVALIDO.message;
+        return {mensaje: SuccessfulMessage.RETIRO_EXTERNO_EXITOSO.message};
+
       }
 
     } catch (error: any) {
@@ -45,14 +52,21 @@ export class MovimientosService {
   async retiroEfectivoExterno(body: any): Promise<object | string | any> {
 
     try {
+      let movimiento: any= {
+        banco: body.nombre_banco,
+        cuenta: body.no_cuenta,
+        nip: body.nip,
+        cantidad: body.monto_retirar,
+      };
+      console.log(movimiento);
       
-      let cuentaClienteResponse = await this.cqrs.consultarCuentaCliente(body)
-      if(cuentaClienteResponse === 0) return ErrorMessage.CLIENTE_INEXISTENTE;
-      if(cuentaClienteResponse === 1) return ErrorMessage.CREDENCIALES_INVALIDAS;
-      if(cuentaClienteResponse === 2) return ErrorMessage.SALDO_INSUFICIENTE;
-      let insertResponse = await MovimientosDao.insertarRetiro(body.banco, body.cuenta, body.cantidad, body.codigo_de_transaccion, 1);
-      if(!insertResponse)return {codigo_inerno: insertResponse, codigo_externo: body.codigo_de_transaccion, message: SuccessfulMessage.RETIRO_EXITOSO.message};
-      return{error: ErrorMessage.RETIRO_INVALIDO.message};
+      let cuentaClienteResponse: any= await this.cqrs.consultarCuentaCliente(movimiento)
+      if(cuentaClienteResponse === 'e0') return {error: true , mensaje: ErrorMessage.CLIENTE_INEXISTENTE.message};
+        if(cuentaClienteResponse === 'e1') return {error: true , mensaje: ErrorMessage.CREDENCIALES_INVALIDAS.message};
+        if(cuentaClienteResponse === 'e2') return {error: true , mensaje: ErrorMessage.SALDO_INSUFICIENTE.message};
+        if(cuentaClienteResponse === 'e3') return {error: true , mensaje: ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CUENTA};
+        if(cuentaClienteResponse === 'e4') return {error: true , mensaje: ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CAJERO}; 
+      return {error: false, codigo_transaccion: cuentaClienteResponse};
 
     } catch (error: any) {
       console.error('Error en MovimientosService:', error);
