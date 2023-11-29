@@ -63,13 +63,12 @@ export class MovimientosService {
         cantidad: body.monto_retirar,
       };
       
-      let cuentaClienteResponse: any= await this.cqrs.consultarCuentaCliente(movimiento)
+      let cuentaClienteResponse: any= await this.cqrs.consultarCuentaClienteRetiroExterno(movimiento)
       if(cuentaClienteResponse === 'e0') return {error: true , mensaje: ErrorMessage.CLIENTE_INEXISTENTE.mensaje};
         if(cuentaClienteResponse === 'e1') return {error: true , mensaje: ErrorMessage.CREDENCIALES_INVALIDAS.mensaje};
         if(cuentaClienteResponse === 'e2') return {error: true , mensaje: ErrorMessage.SALDO_INSUFICIENTE.mensaje};
         if(cuentaClienteResponse === 'e3') return {error: true , mensaje: ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CUENTA.mensaje};
-        if(cuentaClienteResponse === 'e4') return {error: true , mensaje: ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CAJERO.mensaje}; 
-        if(cuentaClienteResponse === 'e5') return ErrorMessage.INFORMACION_INCORRECTA;
+        if(cuentaClienteResponse === 'e4') return {error: true , mensaje: ErrorMessage.INFORMACION_INCORRECTA.mensaje}; 
       return {error: false, codigo_transaccion: cuentaClienteResponse};
 
     } catch (error: any) {
