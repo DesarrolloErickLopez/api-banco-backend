@@ -69,6 +69,33 @@ export class MovimientoCqrs {
 
   }
 
+  async consultarCuentaClienteExterno(movimiento: MovimientoModel): Promise<number | string > {
+
+    try {
+
+        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e4";
+
+        let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);              
+        
+        if(!accountResponse){
+            return 'e0';
+        }else if(accountResponse.nip != movimiento.nip){              
+            return 'e1';
+        }else if(accountResponse.saldo < movimiento.cantidad){
+            return 'e2';
+        }
+        if(await MovimientosDao.actualizarSaldo(accountResponse.saldo - movimiento.cantidad, movimiento.cuenta) !== 1) return 'e3';          
+        
+        return await MovimientosDao.insertarRetiro(movimiento.banco, movimiento.cuenta, movimiento.cantidad, 0, 1);
+        
+        
+      } catch (error: any) {
+        console.error('Error en MovimientosCqrs:', error);
+        return `Error en MovimientosCqrs - Función: consultarCuentaCliente - ${error.message}`;
+      }
+
+}
+
 
 }
   
