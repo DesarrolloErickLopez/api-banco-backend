@@ -22,6 +22,7 @@ export class MovimientosService {
         if(cuentaClienteResponse === 'e2') return ErrorMessage.SALDO_INSUFICIENTE;
         if(cuentaClienteResponse === 'e3') return ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CUENTA;
         if(cuentaClienteResponse === 'e4') return ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CAJERO;        
+        if(cuentaClienteResponse === 'e5') return ErrorMessage.INFORMACION_INCORRECTA;        
         return {codigo_transaccion: cuentaClienteResponse, mensaje: SuccessfulMessage.RETIRO_EXITOSO.mensaje};
 
       }else{
@@ -39,6 +40,8 @@ export class MovimientosService {
         if(response.data.error) return response.data;
          
         let cuentaClienteResponse = await this.cqrs.insertarClienteExterno(movimiento, response.data.codigo_transaccion, disponible);
+        if(cuentaClienteResponse === 'e0') return ErrorMessage.INFORMACION_INCORRECTA;
+        if(cuentaClienteResponse === 'e4') return ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CAJERO;   
         if(!cuentaClienteResponse) return ErrorMessage.RETIRO_INVALIDO;
         return {mensaje: SuccessfulMessage.RETIRO_EXTERNO_EXITOSO.mensaje};
 
@@ -66,6 +69,7 @@ export class MovimientosService {
         if(cuentaClienteResponse === 'e2') return {error: true , mensaje: ErrorMessage.SALDO_INSUFICIENTE.mensaje};
         if(cuentaClienteResponse === 'e3') return {error: true , mensaje: ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CUENTA.mensaje};
         if(cuentaClienteResponse === 'e4') return {error: true , mensaje: ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CAJERO.mensaje}; 
+        if(cuentaClienteResponse === 'e5') return ErrorMessage.INFORMACION_INCORRECTA;
       return {error: false, codigo_transaccion: cuentaClienteResponse};
 
     } catch (error: any) {

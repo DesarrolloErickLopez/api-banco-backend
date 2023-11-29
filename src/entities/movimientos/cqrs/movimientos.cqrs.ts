@@ -24,7 +24,7 @@ export class MovimientoCqrs {
     async consultarCuentaCliente(movimiento: MovimientoModel): Promise<number | string > {
 
         try {
-
+            if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e5";
             let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);              
             
             if(!accountResponse){
