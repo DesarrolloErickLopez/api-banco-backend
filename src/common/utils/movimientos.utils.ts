@@ -1,5 +1,6 @@
 export const ErrorMessage = {
   DISPONIBLE_INSUFICIENTE: {mensaje:'El cajero no dispone del suficiente efectivo.'},
+  INFORMACION_INCORRECTA: {mensaje:'Información incorrecta.'},
   CLIENTE_INEXISTENTE: {mensaje:'No existe registro de esta cuenta.'},
   CREDENCIALES_INVALIDAS: {mensaje:'NIP de seguridad incorrecto.'},
   SALDO_INSUFICIENTE: {mensaje:'Saldo de la cuenta insuficiente.'},  

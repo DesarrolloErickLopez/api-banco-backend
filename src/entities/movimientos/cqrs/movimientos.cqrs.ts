@@ -25,6 +25,8 @@ export class MovimientoCqrs {
 
         try {
 
+            if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e5";
+
             let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);              
             
             if(!accountResponse){
