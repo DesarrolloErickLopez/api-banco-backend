@@ -24,7 +24,8 @@ export class MovimientoCqrs {
     async consultarCuentaCliente(movimiento: MovimientoModel): Promise<number | string > {
 
         try {
-            if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e5";
+
+            if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad <= 0 || movimiento.cantidad == null || movimiento.cantidad === undefined )return "e5";
             let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);              
             
             if(!accountResponse){
@@ -56,7 +57,7 @@ export class MovimientoCqrs {
 
       try {
         
-        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e0";
+        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad <= 0 || movimiento.cantidad == null || movimiento.cantidad === undefined )return "e4";
         if (await MovimientosDao.actualizarDisponibleEnCajero(disponible - movimiento.cantidad) !== 1 ) return 'e4';
         return await MovimientosDao.insertarRetiro(movimiento.banco, movimiento.cuenta, movimiento.cantidad, codigo_transaccion, 1) ;
           
@@ -70,7 +71,9 @@ export class MovimientoCqrs {
   async consultarCuentaClienteRetiroExterno(movimiento: MovimientoModel): Promise<number | string > {
 
     try {
-        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e4";
+        console.log(movimiento.cantidad);
+      
+        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad <= 0 || movimiento.cantidad == null || movimiento.cantidad === undefined )return "e4";
         let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);              
         
         if(!accountResponse){
