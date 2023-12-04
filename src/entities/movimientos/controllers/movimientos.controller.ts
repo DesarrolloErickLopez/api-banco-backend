@@ -13,9 +13,10 @@ export class MovimientosController {
     const movimiento: MovimientoModel = req.body;
 
     try {
-
-      const serviceResponse = await this.service.retiroEfectivoInterno(movimiento);
-      res.send(serviceResponse);
+      console.log("CONTROLADOR DE MOVIMIENTOS");
+      res.send("");
+      // const serviceResponse = await this.service.retiroEfectivoInterno(movimiento);
+      // res.send(serviceResponse);
 
     } catch (error) {
       console.error('Error en el controlador:', error);
