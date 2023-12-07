@@ -5,21 +5,18 @@ export class UsuariosDao {
 
   static async obtenerUsuarios(usuario: any): Promise<any> {
     let correo = usuario.correo;
-    let contrasenia = usuario.contrasenia;
     let sql: string;
-    console.log(correo);
-    console.log(contrasenia);
     
     try {
 
         sql = `
-        SELECT u.id_usuario, CONCAT_WS(' ', u.nombres,u.apellidos) AS nombre_completo,r.id_rol,r.rol 
+        SELECT u.id_usuario, CONCAT_WS(' ', u.nombres,u.apellidos) AS nombre_completo,u.contrasenia,r.id_rol,r.rol 
         FROM don_galleto.usuarios AS u
         INNER JOIN don_galleto.roles AS r ON r.id_rol = u.id_rol
-        WHERE u.correo = ? AND contrasenia = ?;
+        WHERE u.correo = ?;
         `;
 
-        const values = [correo, contrasenia];
+        const values = [correo];
 
         const result = await DatabaseService.executeQuery(sql, values);
         
