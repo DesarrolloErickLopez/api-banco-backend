@@ -7,10 +7,31 @@ export class UsuariosController {
 
   constructor() {}
   
-  @Post('recuperar')
+  @Post('registrar')
   async postRecuperar(@Req() req: Request, @Res() res: Response) {
 
-    console.log(req.body.correo);
+    try {
+      let response;
+      const insertDao = await UsuariosDao.insertarUsuario(req.body);
+
+      if(insertDao != 0){
+        response ={
+          estatus: 1,
+          mensaje: "Usuario registrado con éxito"
+        }
+      }else{
+        response = {
+          estatus: 0,
+          mensaje: "Error al insertar"
+        }
+      }
+
+      res.send(response);
+
+    } catch (error) {
+      console.log("Error en el servidor " + error);
+      return res.status(500).send({messagge: "Error en el servidor"});
+    }
     
   }
 
