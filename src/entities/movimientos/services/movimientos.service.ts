@@ -64,7 +64,7 @@ export class MovimientosService {
         cantidad: body.monto,
       };
       
-      let cuentaClienteResponse: any= await this.cqrs.consultarCuentaClienteExterno(movimiento)
+      let cuentaClienteResponse: any= await this.cqrs.consultarCuentaCliente(movimiento)
       if(cuentaClienteResponse === 'e0') return {error: true , mensaje: ErrorMessage.CLIENTE_INEXISTENTE.mensaje};
         if(cuentaClienteResponse === 'e1') return {error: true , mensaje: ErrorMessage.CREDENCIALES_INVALIDAS.mensaje};
         if(cuentaClienteResponse === 'e2') return {error: true , mensaje: ErrorMessage.SALDO_INSUFICIENTE.mensaje};
