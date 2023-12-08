@@ -10,7 +10,7 @@ export class ProductosDao {
 
         sql = `
           SELECT p.id_producto, p.nombre_producto, u.nombre_unidad, p.precio FROM don_galleto.productos AS p
-          JOIN don_galleto.unidades AS u ON p.id_unidad = u.id_unidad;;
+          JOIN don_galleto.unidades AS u ON p.id_unidad = u.id_unidad;
         `;
 
         const result = await DatabaseService.executeQuery(sql);

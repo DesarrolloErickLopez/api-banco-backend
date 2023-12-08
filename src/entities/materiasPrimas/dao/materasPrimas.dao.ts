@@ -9,8 +9,8 @@ export class MateriasPrimasDao {
         try {
     
             sql = `
-              SELECT p.id_producto, p.nombre_producto, u.nombre_unidad, p.precio FROM productos AS p
-              JOIN unidades AS u ON p.id_unidad = u.id_unidad;;
+             SELECT mp.id, mp.nombre, mp.costo, mp.stock, mp.id_unidad, u.nombre_unidad FROM don_galleto.materias_primas AS mp
+             JOIN don_galleto.unidades AS u ON mp.id_unidad = u.id_unidad;
             `;
     
             const result = await DatabaseService.executeQuery(sql);
@@ -23,5 +23,65 @@ export class MateriasPrimasDao {
         }
     
     }
+
+    static async insertarMateriaPrima(nombre: string, costo: number, stock:number, id_unidad:number){
+        let sql : string;
+    
+        try {
+          
+          sql = `INSERT INTO don_galleto.materias_primas(nombre, costo, stock, id_unidad) VALUES (?,?,?,?);`;
+    
+          const values = [nombre, costo, stock, id_unidad];
+    
+          const result : any = DatabaseService.executeQuery(sql, values);
+    
+          return result.affectedRows;
+    
+        } catch (error) {
+          console.log(`Error al insertar dao: `, error);
+          throw error;      
+        }
+      }
+
+      
+      static async actualizarMateriaPrima(id:string, nombre: string, costo: number, stock:number, id_unidad:number){
+        let sql:string;
+        let values:any = [];
+        try {
+          
+    
+            sql = `UPDATE materias_primas SET nombre_unidad = ?, costo = ?, stock = ?, id_unidad = ? WHERE id = ?;`;
+            values = [nombre, costo, stock, id_unidad, id];
+    
+    
+          const result : any = DatabaseService.executeQuery(sql, values);
+    
+          return result.affectedRows;
+    
+        } catch (error) {
+          console.log(`Error al actualizar dao: `, error);
+          throw error;
+        }
+      }
+    
+      static async eliminarProducto(id: number){
+        let sql:string;
+    
+        try {
+          
+          sql = `DELETE FROM don_galleto.productos WHERE id_producto = ?`;
+    
+          const values = [id];
+    
+          const result : any = await DatabaseService.executeQuery(sql, values);
+          
+          return result.affectedRows;
+    
+        } catch (error) {
+          console.log(`Error al insertar dao: `, error);
+          throw error;      
+        }
+      }
+
 
 }
