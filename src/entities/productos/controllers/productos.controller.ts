@@ -14,37 +14,14 @@ export class ProductosDaoController {
         
         let response;
         const daoResponse = await ProductosDao.obtenerProductos();
-        // console.log(daoResponse);
 
         for (const key in daoResponse) {
-          console.log(
-            daoResponse[key].id_producto
-          );
-          console.log(
-            daoResponse[key].nombre_producto
-          );
-          const daoResponse2 = await ProductosDao.obtenerDetallesProductos();
+          
+          daoResponse[key].detalles = await ProductosDao.obtenerDetallesProductos(daoResponse[key].id_producto);
+
         }
         
         res.send(daoResponse);
-        // if(!daoResponse){
-        //     response = {
-        //         estatus: 0,
-        //         mensaje: "El usuario no existe."
-        //     };
-        // }else if(daoResponse.contrasenia != req.body.contrasenia){
-        //     response = {
-        //         estatus: -1,
-        //         mensaje: "Contraseña incorrecta."
-        //     };
-        // }else{
-        //     response = {
-        //         estatus: 1,
-        //         data: daoResponse
-        //     };
-        // }
-             
-        // res.send(response);
 
     } catch (error) {
       console.error('Error en el controlador:', error);
