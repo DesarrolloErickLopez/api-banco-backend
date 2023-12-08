@@ -29,7 +29,7 @@ export class ProductosDao {
     try {
 
         sql = `
-        SELECT  u.nombre_unidad, up.precio
+        SELECT u.id_unidad ,u.nombre_unidad, up.precio
         FROM don_galleto.unidades_por_producto up
         INNER JOIN don_galleto.unidades u ON u.id_unidad = up.id_unidad 
         WHERE up.id_producto = ${id};
