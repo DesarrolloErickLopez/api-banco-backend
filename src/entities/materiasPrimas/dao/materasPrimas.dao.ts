@@ -50,7 +50,7 @@ export class MateriasPrimasDao {
         try {
           
     
-            sql = `UPDATE materias_primas SET nombre_unidad = ?, costo = ?, stock = ?, id_unidad = ? WHERE id = ?;`;
+            sql = `UPDATE don_galleto.materias_primas SET nombre = ?, costo = ?, stock = ?, id_unidad = ? WHERE id = ?;`;
             values = [nombre, costo, stock, id_unidad, id];
     
     
@@ -64,12 +64,12 @@ export class MateriasPrimasDao {
         }
       }
     
-      static async eliminarProducto(id: number){
+      static async eliminarMateriaPrima(id: number){
         let sql:string;
     
         try {
           
-          sql = `DELETE FROM don_galleto.productos WHERE id_producto = ?`;
+          sql = `DELETE FROM don_galleto.materias_primas WHERE id = ?`;
     
           const values = [id];
     
