@@ -10,6 +10,6 @@ export const ErrorMessage = {
 };
 
 export const SuccessfulMessage = {
-  RETIRO_EXITOSO: {mensaje:'Retiro realizado con exito, gracias.'},
-  RETIRO_EXTERNO_EXITOSO: {mensaje:'Retiro realizado con exito, consulte su saldo con su banco.'},
+  RETIRO_EXITOSO: {mensaje:'Retiro exitoso.'},
+  RETIRO_EXTERNO_EXITOSO: {mensaje:'Retiro exitoso, consulte su saldo en una sucursal de su banco.'},
 };

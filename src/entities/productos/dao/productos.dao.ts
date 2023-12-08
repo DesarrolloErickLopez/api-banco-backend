@@ -9,10 +9,38 @@ export class ProductosDao {
     try {
 
         sql = `
-        SELECT * FROM don_galleto.productos;
+        SELECT p.id_producto, p.nombre_producto, u.nombre_unidad, up.precio, u.id_unidad
+        FROM don_galleto.productos AS p
+        JOIN don_galleto.unidades_por_producto AS up ON p.id_producto = up.id_producto
+        JOIN don_galleto.unidades AS u ON up.id_unidad = u.id_unidad;
         `;
 
         const result = await DatabaseService.executeQuery(sql);
+        
+        return result;
+        
+    } catch (error) {
+        console.error('Error en MovimientosDao:', error);
+        throw error;
+    }
+
+  }
+
+  static async obtenerUnProductos(id:number, idUnidad: number): Promise<any> {
+    let sql: string;
+    
+    try {
+
+        sql = `
+        SELECT p.id_producto, p.nombre_producto, u.nombre_unidad, up.precio, u.id_unidad
+        FROM don_galleto.productos AS p
+        JOIN don_galleto.unidades_por_producto AS up ON p.id_producto = up.id_producto
+        JOIN don_galleto.unidades AS u ON up.id_unidad = u.id_unidad WHERE p.id_producto = ? AND u.id_unidad = ?;
+        `;
+
+        const values =[id, idUnidad];
+
+        const result = await DatabaseService.executeQuery(sql, values);
         
         return result;
         
@@ -45,14 +73,14 @@ export class ProductosDao {
     }
   }
 
-  static async insertarProducto(nombre: string, imagen: string){
+  static async insertarProducto(nombre: string){
     let sql : string;
 
     try {
       
       sql = `INSERT INTO don_galleto.productos(nombre_producto, imagen) VALUES (?,?);`;
 
-      const values = [nombre, imagen];
+      const values = [nombre, ""];
 
       const result : any = DatabaseService.executeQuery(sql, values);
 
@@ -64,18 +92,20 @@ export class ProductosDao {
     }
   }
 
-  static async actualizarProducto(id:string, nombre:string, imagen:string){
+  static async actualizarProducto(id:string, nombre: string, idUnidadEditar: number){
     let sql:string;
     let values:any = [];
     try {
       
-      if(imagen != '' || imagen != null){
-        sql = `UPDATE don_galleto.productos SET nombre_producto = ?, imagen = ? WHERE id_producto = ?`;
-        values = [nombre, imagen, id];
-      }else{
-        sql = `UPDATE don_galleto.productos SET nombre_producto = ? WHERE id_producto = ?`;
-        values = [nombre, id];
-      }
+
+        sql = `UPDATE don_galleto.productos AS p
+        JOIN don_galleto.unidades_por_producto AS up ON p.id_producto = up.id_producto
+        JOIN don_galleto.unidades AS u ON up.id_unidad = u.id_unidad
+        SET don_galleto.p.nombre_producto = ?
+        WHERE p.id_producto = ? AND u.id_unidad = ?`;
+        values = [nombre, id, idUnidadEditar];
+
+        console.log(sql)
 
       const result : any = DatabaseService.executeQuery(sql, values);
 
@@ -112,6 +142,20 @@ export class ProductosDao {
       sql = `SELECT v.id, v.id_producto, p.nombre_producto, p.imagen, v.id_unidad, uv.nombre_unidad, v.cantidad, v.total, v.fecha_venta FROM don_galleto.ventas AS v
       JOIN don_galleto.productos AS p ON v.id_producto = p.id_producto
       JOIN don_galleto.unidades AS uv ON v.id_unidad = uv.id_unidad;`;
+
+      const result = await DatabaseService.executeQuery(sql);
+
+      return result;
+    } catch (error) {
+      console.log("Error el insertar dao: ", error);
+      throw error;
+    }
+  }
+
+  static async obtenerUnidades(){
+    let sql: string; 
+    try {
+      sql = `SELECT * FROM don_galleto.unidades;`;
 
       const result = await DatabaseService.executeQuery(sql);
 
