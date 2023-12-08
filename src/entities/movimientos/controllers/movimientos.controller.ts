@@ -27,6 +27,7 @@ export class MovimientosController {
   async postRetirarExterno(@Req() req: Request, @Res() res: Response) {
 
     try {
+      console.log(req.body);
       
       const serviceResponse = await this.service.retiroEfectivoExterno(req.body);  
       res.send(serviceResponse);

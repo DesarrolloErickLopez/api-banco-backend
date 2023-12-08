@@ -25,7 +25,7 @@ export class MovimientoCqrs {
 
         try {
 
-            if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e5";
+            if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad <= 0 || movimiento.cantidad == null )return "e5";
 
             let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);              
             
@@ -58,7 +58,7 @@ export class MovimientoCqrs {
 
       try {
         
-        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e0";
+        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad <= 0 )return "e0";
         if (await MovimientosDao.actualizarDisponibleEnCajero(disponible - movimiento.cantidad) !== 1 ) return 'e4';
         return await MovimientosDao.insertarRetiro(movimiento.banco, movimiento.cuenta, movimiento.cantidad, codigo_transaccion, 1) ;
           
@@ -73,7 +73,7 @@ export class MovimientoCqrs {
 
     try {
 
-        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad === 0 )return "e4";
+        if(movimiento.cuenta.toString().length > 4 || movimiento.cantidad <= 0 )return "e4";
 
         let accountResponse =  await MovimientosDao.verificarCuentaCliente(movimiento.cuenta);              
         

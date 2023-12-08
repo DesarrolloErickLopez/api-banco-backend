@@ -106,7 +106,7 @@ export class MovimientosDao {
   }
 
   static async consultarIp(): Promise<any> {
-    let id_banco_externo: number = 1;
+    let id_banco_externo: number = 3;
     let sql: string;
     
     try {
@@ -114,7 +114,7 @@ export class MovimientosDao {
         sql = 'SELECT ip_banco_externo FROM cityutl.bancos_externos WHERE id_banco_externo = ? ;';
 
         const values = [id_banco_externo];
-        
+      
         const result: any = await DatabaseService.executeQuery(sql, values);
         
         return result[0];
