@@ -9,7 +9,8 @@ export class ProductosDao {
     try {
 
         sql = `
-        SELECT * FROM don_galleto.productos;
+          SELECT p.id_producto, p.nombre_producto, u.nombre_unidad, p.precio FROM productos AS p
+          JOIN unidades AS u ON p.id_unidad = u.id_unidad;;
         `;
 
         const result = await DatabaseService.executeQuery(sql);
@@ -45,14 +46,14 @@ export class ProductosDao {
     }
   }
 
-  static async insertarProducto(nombre: string, imagen: string){
+  static async insertarProducto(nombre: string, id_unidad: number, precio:number){
     let sql : string;
 
     try {
       
-      sql = `INSERT INTO don_galleto.productos(nombre_producto, imagen) VALUES (?,?);`;
+      sql = `INSERT INTO don_galleto.productos(nombre_producto, id_unidad, precio) VALUES (?,?,?);`;
 
-      const values = [nombre, imagen];
+      const values = [nombre, id_unidad, precio];
 
       const result : any = DatabaseService.executeQuery(sql, values);
 
@@ -64,18 +65,15 @@ export class ProductosDao {
     }
   }
 
-  static async actualizarProducto(id:string, nombre:string, imagen:string){
+  static async actualizarProducto(id:string, nombre: string, id_unidad: number, precio:number){
     let sql:string;
     let values:any = [];
     try {
       
-      if(imagen != '' || imagen != null){
-        sql = `UPDATE don_galleto.productos SET nombre_producto = ?, imagen = ? WHERE id_producto = ?`;
-        values = [nombre, imagen, id];
-      }else{
-        sql = `UPDATE don_galleto.productos SET nombre_producto = ? WHERE id_producto = ?`;
-        values = [nombre, id];
-      }
+
+        sql = `UPDATE don_galleto.productos SET nombre_producto = ?, id_unidad = ?, precio = ? WHERE id_producto = ?`;
+        values = [nombre, id_unidad, precio, id];
+
 
       const result : any = DatabaseService.executeQuery(sql, values);
 
