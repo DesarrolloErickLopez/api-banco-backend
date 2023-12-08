@@ -54,9 +54,29 @@ export class MovimientosDao {
 
         const values = [saldo, cuenta];
         
-        const result = await DatabaseService.executeQuery(sql, values);
+        const result: any = await DatabaseService.executeQuery(sql, values);
+      
+        return result.affectedRows;
         
-        return result[0];
+    } catch (error) {
+        console.error('Error en MovimientosDao:', error);
+        throw error;
+    }
+
+  }
+
+  static async actualizarDisponibleEnCajero(disponible: number): Promise<any> {
+    let sql: string;
+    
+    try {
+
+        sql = 'UPDATE bbvutl.cajero  SET disponible = ? WHERE id_cajero = 1;';
+
+        const values = [disponible];
+
+        const result: any = await DatabaseService.executeQuery(sql, values);
+      
+        return result.affectedRows;
         
     } catch (error) {
         console.error('Error en MovimientosDao:', error);
@@ -116,7 +136,6 @@ export class MovimientosDao {
         const values = [id_retiro];
         
         const result: any = await DatabaseService.executeQuery(sql, values);
-        console.log(result);
         
         return result.insertId;
         
