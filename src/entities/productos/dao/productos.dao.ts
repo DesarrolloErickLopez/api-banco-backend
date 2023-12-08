@@ -9,8 +9,10 @@ export class ProductosDao {
     try {
 
         sql = `
-          SELECT p.id_producto, p.nombre_producto, u.nombre_unidad, p.precio FROM don_galleto.productos AS p
-          JOIN don_galleto.unidades AS u ON p.id_unidad = u.id_unidad;
+        SELECT p.id_producto, p.nombre_producto, u.nombre_unidad, up.precio
+        FROM don_galleto.productos AS p
+        JOIN don_galleto.unidades_por_producto AS up ON p.id_producto = up.id_producto
+        JOIN don_galleto.unidades AS u ON up.id_unidad = u.id_unidad;
         `;
 
         const result = await DatabaseService.executeQuery(sql);
@@ -46,14 +48,14 @@ export class ProductosDao {
     }
   }
 
-  static async insertarProducto(nombre: string, id_unidad: number, precio:number){
+  static async insertarProducto(nombre: string){
     let sql : string;
 
     try {
       
-      sql = `INSERT INTO don_galleto.productos(nombre_producto, id_unidad, precio) VALUES (?,?,?);`;
+      sql = `INSERT INTO don_galleto.productos(nombre_producto, imagen) VALUES (?,?);`;
 
-      const values = [nombre, id_unidad, precio];
+      const values = [nombre, ""];
 
       const result : any = DatabaseService.executeQuery(sql, values);
 
@@ -65,14 +67,14 @@ export class ProductosDao {
     }
   }
 
-  static async actualizarProducto(id:string, nombre: string, id_unidad: number, precio:number){
+  static async actualizarProducto(id:string, nombre: string){
     let sql:string;
     let values:any = [];
     try {
       
 
-        sql = `UPDATE don_galleto.productos SET nombre_producto = ?, id_unidad = ?, precio = ? WHERE id_producto = ?`;
-        values = [nombre, id_unidad, precio, id];
+        sql = `UPDATE don_galleto.productos SET nombre_producto = ? WHERE id_producto = ?`;
+        values = [nombre, id];
 
 
       const result : any = DatabaseService.executeQuery(sql, values);

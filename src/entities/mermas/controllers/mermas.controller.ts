@@ -1,19 +1,20 @@
-import { Controller, Get, Post, Delete, Put, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { MateriasPrimasDao } from '../dao/materasPrimas.dao';
+import { MermasDao } from '../dao/mermas.dao';
 
-@Controller('materiasPrimas')
-export class MateriasPrimasController {
+@Controller('mermas')
+export class MermasController {
 
   constructor() {}
   
-  @Get('listarMateriasPrimas')
+  
+  @Get('listarMermas')
   async getObtenerMaterias(@Req() req: Request, @Res() res: Response) {
 
     try {
         
         let response;
-        const daoResponse = await MateriasPrimasDao.obtenerMaateriasPrimas();
+        const daoResponse = await MermasDao.obtenerMermas();
       
         res.send(daoResponse);
 
@@ -23,22 +24,22 @@ export class MateriasPrimasController {
     }
   }
 
-  @Post('insertarMateriaPrima')
+  @Post('insertarMermas')
   async insertarMateriaPrima(@Req() req: Request, @Res() res: Response){
     try {
       console.log(req.body)
       let response;
-      const daoResponse = await MateriasPrimasDao.insertarMateriaPrima(req.body.nombre, req.body.costo, req.body.stock, req.body.id_unidad);
+      const daoResponse = await MermasDao.insertarMermas(req.body.id_producto, req.body.monto_mermado, req.body.id_unidad, req.body.causa);
 
       if(daoResponse != 0){
         response = {
           estatus: 1,
-          mensaje: "Materia prima registrado"
+          mensaje: "Merma registrado"
         }
       }else{
         response = {
           estatus:0,
-          mensaje: "Error al insertar la materia prima"
+          mensaje: "Error al insertar la merma"
         }
       }
 
@@ -50,21 +51,21 @@ export class MateriasPrimasController {
     }
   }
 
-  @Put('actualizarMateriaPrima')
+  @Put('actualizarMerma')
   async actualizarPMateria(@Req() req: Request, @Res() res: Response){
     try {
       let response;
-      const daoResponse = await MateriasPrimasDao.actualizarMateriaPrima(req.body.id, req.body.nombre, req.body.costo, req.body.stock, req.body.id_unidad);
+      const daoResponse = await MermasDao.actualizarMermas(req.body.id, req.body.id_producto, req.body.monto_mermado, req.body.id_unidad, req.body.causa);
 
       if(daoResponse != 0){
         response = {
           estatus: 1,
-          mensaje: "Materia prima modificado"
+          mensaje: "Merma modificado"
         }
       }else{
         response = {
           estatus:0,
-          mensaje: "Error al modificar la materia prima"
+          mensaje: "Error al modificar la merma"
         }
       }
 
@@ -76,21 +77,21 @@ export class MateriasPrimasController {
     }
   }
 
-  @Delete('eliminarMateriaPrima')
+  @Delete('eliminarMerma')
   async eliminarProducto(@Req() req: Request, @Res() res: Response){
     try {
       let response;
-      const daoResponse = await MateriasPrimasDao.eliminarMateriaPrima(req.body.id);
+      const daoResponse = await MermasDao.eliminarMermas(req.body.id);
 
       if(daoResponse != 0){
         response = {
           estatus: 1,
-          mensaje: "Materia prima eliminado"
+          mensaje: "Merma eliminada"
         }
       }else{
         response = {
           estatus:0,
-          mensaje: "Error al eliminar la materia prima"
+          mensaje: "Error al eliminar la merma"
         }
       }
 
@@ -100,4 +101,5 @@ export class MateriasPrimasController {
       res.status(500).send({message: 'Error en el servidor'});
     }
   }
+
 }

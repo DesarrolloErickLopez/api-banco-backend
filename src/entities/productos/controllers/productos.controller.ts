@@ -34,7 +34,7 @@ export class ProductosDaoController {
     try {
       console.log(req.body)
       let response;
-      const daoResponse = await ProductosDao.insertarProducto(req.body.nombre, req.body.id_unidad, req.body.precio);
+      const daoResponse = await ProductosDao.insertarProducto(req.body.nombre);
 
       if(daoResponse != 0){
         response = {
@@ -60,7 +60,7 @@ export class ProductosDaoController {
   async actualizarProducto(@Req() req: Request, @Res() res: Response){
     try {
       let response;
-      const daoResponse = await ProductosDao.actualizarProducto(req.body.id, req.body.nombre, req.body.id_unidad, req.body.precio);
+      const daoResponse = await ProductosDao.actualizarProducto(req.body.id, req.body.nombre);
 
       if(daoResponse != 0){
         response = {
