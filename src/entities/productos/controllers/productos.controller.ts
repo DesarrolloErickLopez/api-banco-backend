@@ -29,6 +29,22 @@ export class ProductosDaoController {
     }
   }
 
+  @Get('obtenerUnProducto')
+  async getObtenerProducto(@Req() req: Request, @Res() res: Response) {
+
+    try {
+        
+        let response;
+        const daoResponse = await ProductosDao.obtenerUnProductos(req.body.id);
+        
+        res.send(daoResponse);
+
+    } catch (error) {
+      console.error('Error en el controlador:', error);
+      res.status(500).send({ message: 'Error en el servidor' });
+    }
+  }
+
   @Post('insertarProducto')
   async insertarProducto(@Req() req: Request, @Res() res: Response){
     try {
@@ -48,7 +64,10 @@ export class ProductosDaoController {
         }
       }
 
+      
       res.send(response);
+
+
 
     } catch (error) {
       console.log('Error en el controlador: ', error);

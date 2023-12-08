@@ -26,6 +26,31 @@ export class ProductosDao {
 
   }
 
+  static async obtenerUnProductos(id:number): Promise<any> {
+    let sql: string;
+    
+    try {
+
+        sql = `
+        SELECT p.id_producto, p.nombre_producto, u.nombre_unidad, up.precio
+        FROM don_galleto.productos AS p
+        JOIN don_galleto.unidades_por_producto AS up ON p.id_producto = up.id_producto
+        JOIN don_galleto.unidades AS u ON up.id_unidad = u.id_unidad WHERE id_producto = ?;
+        `;
+
+        const values =[id];
+
+        const result = await DatabaseService.executeQuery(sql, values);
+        
+        return result;
+        
+    } catch (error) {
+        console.error('Error en MovimientosDao:', error);
+        throw error;
+    }
+
+  }
+
   static async obtenerDetallesProductos(id: number): Promise<any> {
     let sql: string;
     
