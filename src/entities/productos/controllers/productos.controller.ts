@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put, Req, Res } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Post, Put, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ProductosDao } from '../dao/productos.dao';
 
@@ -29,13 +29,13 @@ export class ProductosDaoController {
     }
   }
 
-  @Get('obtenerUnProducto')
-  async getObtenerProducto(@Req() req: Request, @Res() res: Response) {
+  @Get('obtenerUnProducto/:id/:idUnidad')
+  async getObtenerProducto(@Param('id') id: number, @Param('idUnidad') idUnidad: number, @Req() req: Request, @Res() res: Response) {
 
     try {
-        
+        console.log(req)
         let response;
-        const daoResponse = await ProductosDao.obtenerUnProductos(req.body.id);
+        const daoResponse = await ProductosDao.obtenerUnProductos(id, idUnidad);
         
         res.send(daoResponse);
 
@@ -79,7 +79,7 @@ export class ProductosDaoController {
   async actualizarProducto(@Req() req: Request, @Res() res: Response){
     try {
       let response;
-      const daoResponse = await ProductosDao.actualizarProducto(req.body.id, req.body.nombre);
+      const daoResponse = await ProductosDao.actualizarProducto(req.body.id, req.body.nombre, req.body.idUnidadEditar);
 
       if(daoResponse != 0){
         response = {
@@ -130,7 +130,18 @@ export class ProductosDaoController {
   async getObtenerVentas(@Req() req: Request, @Res() res: Response){
     try {
       const daoResponse = await ProductosDao.obtenerVentas();
+      res.send(daoResponse);
 
+    } catch (error) {
+      console.log('Error en el controlador: ', error);
+      res.status(500).send({message: 'Error en el servidor'});
+    }
+  }
+
+  @Get('listarUnidades')
+  async getUnidades(@Req() req: Request, @Res() res: Response){
+    try {
+      const daoResponse = await ProductosDao.obtenerUnidades();
       res.send(daoResponse);
 
     } catch (error) {
