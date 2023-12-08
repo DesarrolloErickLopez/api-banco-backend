@@ -19,9 +19,6 @@ export class ProductosDaoController {
           
           daoResponse[key].detalles = await ProductosDao.obtenerDetallesProductos(daoResponse[key].id_producto);
 
-          // console.log(
-          //   daoResponse[key]
-          // );
         }
         
         res.send(daoResponse);

@@ -10,7 +10,7 @@ export class UsuariosDao {
     try {
 
         sql = `
-        SELECT u.id_usuario, CONCAT_WS(' ', u.nombres,u.apellidos) AS nombre_completo,u.contrasenia,r.id_rol,r.rol 
+        SELECT u.id_usuario, u.contrasenia, r.id_rol, r.rol 
         FROM don_galleto.usuarios AS u
         INNER JOIN don_galleto.roles AS r ON r.id_rol = u.id_rol
         WHERE u.correo = ?;
