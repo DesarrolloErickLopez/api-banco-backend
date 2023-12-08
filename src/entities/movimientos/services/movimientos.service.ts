@@ -14,7 +14,7 @@ export class MovimientosService {
 
     try {
       
-      if(movimiento.banco == "bbvutl") {
+      if(movimiento.banco == "cityutl") {
         if(await this.cqrs.consultarDisponibleEnCajero(movimiento.cantidad))return ErrorMessage.DISPONIBLE_INSUFICIENTE;
         let cuentaClienteResponse = await this.cqrs.consultarCuentaCliente(movimiento);
         if(cuentaClienteResponse === 'e0') return ErrorMessage.CLIENTE_INEXISTENTE;
@@ -30,15 +30,16 @@ export class MovimientosService {
         let ip = await MovimientosDao.consultarIp();
         let disponible = await MovimientosDao.obtenerDisponibleEnCajero();
         if ( disponible < movimiento.cantidad) return ErrorMessage.DISPONIBLE_INSUFICIENTE;
-        const response: any= await axios.post(ip.ip_banco, {
-          nombre_banco: 'bbvutl',
+        console.log(ip.ip_banco_externo);
+        const response: any= await axios.post(ip.ip_banco_externo, {
+          nombre_banco: 'cityutl',
           no_cuenta: movimiento.cuenta,
           nip: movimiento.nip,
-          monto_retirar: movimiento.cantidad,
+          monto: movimiento.cantidad,
                   
         });
+        
         if(response.data.error) return response.data;
-         
         let cuentaClienteResponse = await this.cqrs.insertarClienteExterno(movimiento, response.data.codigo_transaccion, disponible);
         if(cuentaClienteResponse === 'e0') return ErrorMessage.INFORMACION_INCORRECTA;
         if(cuentaClienteResponse === 'e4') return ErrorMessage.ACTUALIZACIÓN_INCORRECTA_EN_CAJERO;   
@@ -60,7 +61,7 @@ export class MovimientosService {
         banco: body.nombre_banco,
         cuenta: body.no_cuenta,
         nip: body.nip,
-        cantidad: body.monto_retirar,
+        cantidad: body.monto,
       };
       
       let cuentaClienteResponse: any= await this.cqrs.consultarCuentaClienteRetiroExterno(movimiento)

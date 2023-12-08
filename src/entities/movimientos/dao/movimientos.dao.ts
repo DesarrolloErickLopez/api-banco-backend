@@ -5,14 +5,14 @@ export class MovimientosDao {
     constructor() {}
 
   static async obtenerDisponibleEnCajero(): Promise<number> {
-    let id_cajero: number = 1;
+    let no_cajero: number = 1;
     let sql: string;
     
     try {
 
-        sql = 'SELECT disponible FROM bbvutl.cajero WHERE id_cajero = ?;';
+        sql = 'SELECT disponible FROM cityutl.cajero_cityutl WHERE no_cajero = ?;';
 
-        const values = [id_cajero];
+        const values = [no_cajero];
 
         const result = await DatabaseService.executeQuery(sql, values);
         
@@ -30,7 +30,7 @@ export class MovimientosDao {
     
     try {
 
-        sql = 'SELECT * FROM bbvutl.cuentas WHERE no_cuenta = ?;';
+        sql = 'SELECT * FROM cityutl.cuentas_clientes WHERE numero_cuenta = ?;';
 
         const values = [cuenta];
 
@@ -50,7 +50,7 @@ export class MovimientosDao {
     
     try {
 
-        sql = 'UPDATE bbvutl.cuentas SET saldo = ? WHERE no_cuenta = ?;';
+        sql = 'UPDATE cityutl.cuentas_clientes SET saldo = ? WHERE numero_cuenta = ?;';
 
         const values = [saldo, cuenta];
         
@@ -70,7 +70,7 @@ export class MovimientosDao {
     
     try {
 
-        sql = 'UPDATE bbvutl.cajero  SET disponible = ? WHERE id_cajero = 1;';
+        sql = 'UPDATE cityutl.cajero_cityutl  SET disponible = ? WHERE no_cajero = 1;';
 
         const values = [disponible];
 
@@ -85,14 +85,14 @@ export class MovimientosDao {
 
   }
 
-  static async insertarRetiro(banco:string, no_cuenta:number, monto:number, codigo_de_transaccion:number, estatus:number): Promise<any> {
+  static async insertarRetiro(nombre_banco:string, numero_cuenta:number, retiro:number, codigo_transaccion:number, estatus:number): Promise<any> {
     let sql: string;
     
     try {
 
-        sql = 'INSERT INTO bbvutl.retiros(banco, no_cuenta, monto, codigo_de_transaccion, estatus, fecha)VALUES(?, ?, ?, ?, ?, NOW())';
+        sql = 'INSERT INTO cityutl.transacciones(nombre_banco, numero_cuenta, retiro, codigo_transaccion, estatus, fecha_registro)VALUES(?, ?, ?, ?, ?, NOW())';
 
-        const values = [banco, no_cuenta, monto, codigo_de_transaccion, estatus];
+        const values = [nombre_banco, numero_cuenta, retiro, codigo_transaccion, estatus];
         
         const result: any = await DatabaseService.executeQuery(sql, values);
         
@@ -106,38 +106,18 @@ export class MovimientosDao {
   }
 
   static async consultarIp(): Promise<any> {
-    let id_cajero: number = 1;
+    let id_banco_externo: number = 3;
     let sql: string;
     
     try {
 
-        sql = 'SELECT ip_banco FROM bbvutl.bancos WHERE id_banco = ? ;';
+        sql = 'SELECT ip_banco_externo FROM cityutl.bancos_externos WHERE id_banco_externo = ? ;';
 
-        const values = [id_cajero];
-        
+        const values = [id_banco_externo];
+      
         const result: any = await DatabaseService.executeQuery(sql, values);
         
         return result[0];
-        
-    } catch (error) {
-        console.error('Error en MovimientosDao:', error);
-        throw error;
-    }
-
-  }
-
-  static async actualizarRetiro(id_retiro:number): Promise<any> {
-    let sql: string;
-    
-    try {
-
-        sql = 'UPDATE bbvutl.retiros SET estatus = 1 Where id_retiro = ? ;';
-
-        const values = [id_retiro];
-        
-        const result: any = await DatabaseService.executeQuery(sql, values);
-        
-        return result.insertId;
         
     } catch (error) {
         console.error('Error en MovimientosDao:', error);
