@@ -26,6 +26,34 @@ export class ProductosDao {
 
   }
 
+  static async registrarVenta(param: any): Promise<any> {
+    let sql: string;
+    // console.log(param);
+    // return;
+    try {
+
+        sql = `
+        INSERT INTO don_galleto.ventas
+        (id_producto,id_unidad,cantidad,total,fecha_venta)
+        VALUES(?,?,?,?, NOW());
+        `;
+
+        const values =[param.id_producto, param.id_unidad,param.cantidad,param.total];
+
+        const result: any = await DatabaseService.executeQuery(sql, values);
+        // console.log(result);
+        if(result){
+          return 1;
+        }
+        // return result.affectedRows;
+        
+    } catch (error) {
+        console.error('Error en MovimientosDao:', error);
+        throw error;
+    }
+
+  }
+
   static async obtenerUnProductos(id:number, idUnidad: number): Promise<any> {
     let sql: string;
     

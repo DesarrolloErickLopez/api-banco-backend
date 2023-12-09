@@ -28,6 +28,33 @@ export class ProductosDaoController {
       res.status(500).send({ message: 'Error en el servidor' });
     }
   }
+  @Post('registrarventa')
+  async postventa(@Req() req: Request, @Res() res: Response) {
+
+    try {
+        // console.log(req.body);
+        let arra: any = req.body;
+        let response;
+        let daoResponse;
+        for (const key in arra) {
+          daoResponse = await ProductosDao.registrarVenta(arra[key]);  
+        }
+        // console.log("asdasd");
+        // console.log(daoResponse);
+        if(daoResponse){
+          response = {
+            estatus: 1,
+            mensaje:"Registro exitoso" ,
+          };
+        }
+        
+        res.send(response);
+
+    } catch (error) {
+      console.error('Error en el controlador:', error);
+      res.status(500).send({ message: 'Error en el servidor' });
+    }
+  }
 
   @Get('obtenerUnProducto/:id/:idUnidad')
   async getObtenerProducto(@Param('id') id: number, @Param('idUnidad') idUnidad: number, @Req() req: Request, @Res() res: Response) {
